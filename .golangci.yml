@@ -38,6 +38,7 @@ linters-settings:
           - $gostd
           - google.golang.org/grpc
           - connectrpc.com/connect
+          - github.com/franchb/grpc-connect-go-errors
 
 linters:
   enable-all: true
@@ -45,7 +46,6 @@ linters:
     - cyclop            # covered by gocyclo
     - funlen            # rely on code review to limit function length
     - gocognit          # dubious "cognitive overhead" quantification
-    - goimports         # rely on gci instead
     - gomnd             # some unnamed constants are okay
     - inamedparam       # convention is not followed
     - ireturn           # "accept interfaces, return structs" isn't ironclad
@@ -56,6 +56,7 @@ linters:
     - wrapcheck         # don't _always_ need to wrap errors
     - wsl               # generous whitespace violates house style
     - execinquery
+    - gci
 issues:
   exclude:
     # Don't ban use of fmt.Errorf to create new errors, but the remaining
