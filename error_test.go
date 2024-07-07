@@ -43,27 +43,27 @@ func TestFromGRPCError(t *testing.T) {
 		{name: "sql.ErrNoRows", err: sql.ErrNoRows, code: 0},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			result := connectgrpcerr.FromGRPCError(tc.err)
-			if tc.err == nil {
+			result := connectgrpcerr.FromGRPCError(testCase.err)
+			if testCase.err == nil {
 				if result != nil {
-					t.Errorf("exected nil error on nil input, got %v", result)
+					t.Errorf("expected nil error on nil input, got %v", result)
 				}
 				return
 			}
 			var connectErr *connect.Error
 			ok := errors.As(result, &connectErr)
 			if ok {
-				if _, isStatusErr := status.FromError(tc.err); !isStatusErr && !errors.Is(result, tc.err) {
-					t.Errorf("passed not status.Error (%v), expected this error wrapped, , got %v", tc.err, result)
+				if _, isStatusErr := status.FromError(testCase.err); !isStatusErr && !errors.Is(result, testCase.err) {
+					t.Errorf("passed non-status.Error (%v), expected this error wrapped, got %v", testCase.err, result)
 				}
-			} else if !(errors.Is(result, tc.err) && result.Error() == tc.err.Error()) {
-				t.Errorf("non-status error passed in FromGRPCError should be wrapped with connect.Error, got %v",
-					result)
+			} else if !(errors.Is(result, testCase.err) && result.Error() == testCase.err.Error()) {
+				t.Errorf("non-status error passed in FromGRPCError should be wrapped with connect.Error, got %v", result)
 			}
 		})
+	}
 	}
 }
 
