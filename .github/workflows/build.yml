@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 # See https://github.com/franchb/.github-go/tree/main/.github/workflows
 jobs:
   build:
@@ -15,4 +18,8 @@ jobs:
   lint:
     uses: franchb/.github-go/.github/workflows/lint.yml@v0.2.5
   codeql:
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
     uses: franchb/.github-go/.github/workflows/codeql.yml@v0.2.5

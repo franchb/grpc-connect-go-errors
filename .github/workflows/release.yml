@@ -8,6 +8,9 @@ on:
         required: true
         default: 'v0.0.0'
 
+permissions:
+  contents: read
+
 # See https://github.com/franchb/.github-go/tree/main/.github/workflows
 jobs:
   build:
