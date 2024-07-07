@@ -34,7 +34,7 @@ before passing them to the connect-go handler, ensuring correct HTTP status code
 
 I've created an [issue](https://github.com/connectrpc/connect-go/issues/763) in the connect-go repo, and @jhump responded:
 
- > One big objective of Connect is to providing support for HTTP 1.1 for web and mobile RPC clients, another is to 
+ > One big objective of Connect is providing support for HTTP 1.1 for web and mobile RPC clients, another is to 
  > provide libraries that are lightweight & simple and that use standard (or widely used) 
  > libraries and idioms for the target language. So pulling the behemoth that is grpc-go into connect-go's 
  > dependency graph is a non-starter.
