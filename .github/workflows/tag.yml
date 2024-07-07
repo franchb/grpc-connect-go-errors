@@ -1,10 +1,12 @@
 name: build
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to create'
+        required: true
+        default: 'v0.0.0'
 
 permissions:
   contents: read
