@@ -1,0 +1,22 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to create'
+        required: true
+        default: 'v0.0.0'
+
+# See https://github.com/franchb/.github-go/tree/main/.github/workflows
+jobs:
+  build:
+    uses: franchb/.github-go/.github/workflows/build.yml@v0.2.3
+  test:
+    uses: franchb/.github-go/.github/workflows/test.yml@v0.2.3
+  lint:
+    uses: franchb/.github-go/.github/workflows/test.yml@v0.2.3
