@@ -64,7 +64,6 @@ func TestFromGRPCError(t *testing.T) {
 			}
 		})
 	}
-	}
 }
 
 func TestFromGRPCErrorCodeOK(t *testing.T) {
