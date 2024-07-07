@@ -19,4 +19,6 @@ jobs:
   test:
     uses: franchb/.github-go/.github/workflows/test.yml@v0.2.3
   lint:
-    uses: franchb/.github-go/.github/workflows/test.yml@v0.2.3
+    uses: franchb/.github-go/.github/workflows/lint.yml@v0.2.3
+  codeql:
+    uses: franchb/.github-go/.github/workflows/codeql.yml@v0.2.3
