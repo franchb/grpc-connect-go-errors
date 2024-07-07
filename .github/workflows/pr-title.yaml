@@ -14,5 +14,5 @@ on:
       - reopened
       - synchronize
 jobs:
-  lint:
+  pr-lint:
     uses: bufbuild/base-workflows/.github/workflows/pr-title.yaml@main
