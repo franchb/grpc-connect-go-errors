@@ -1,0 +1,64 @@
+run:
+  modules-download-mode: readonly
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+  exhaustruct:
+    include:
+      # No zero values for param structs.
+      - 'connectrpc\.com/connect\..*[pP]arams'
+  forbidigo:
+    forbid:
+      - '^fmt\.Print'
+      - '^log\.'
+      - '^print$'
+      - '^println$'
+      - '^panic$'
+  godox:
+    keywords: [TODO, FIXME]
+  importas:
+    no-unaliased: true
+    alias:
+      - pkg: connectrpc.com/connect
+        alias: connect
+  varnamelen:
+    ignore-decls:
+      - T any
+      - i int
+      - wg sync.WaitGroup
+
+  depguard:
+    rules:
+      main:
+        list-mode: strict
+        files:
+          - $all
+        # List of allowed packages.
+        allow:
+          - $gostd
+          - google.golang.org/grpc
+          - connectrpc.com/connect
+
+linters:
+  enable-all: true
+  disable:
+    - cyclop            # covered by gocyclo
+    - funlen            # rely on code review to limit function length
+    - gocognit          # dubious "cognitive overhead" quantification
+    - goimports         # rely on gci instead
+    - gomnd             # some unnamed constants are okay
+    - inamedparam       # convention is not followed
+    - ireturn           # "accept interfaces, return structs" isn't ironclad
+    - maintidx          # covered by gocyclo
+    - nlreturn          # generous whitespace violates house style
+    - nonamedreturns    # named returns are fine; it's *bare* returns that are bad
+    - protogetter       # too many false positives
+    - wrapcheck         # don't _always_ need to wrap errors
+    - wsl               # generous whitespace violates house style
+    - execinquery
+issues:
+  exclude:
+    # Don't ban use of fmt.Errorf to create new errors, but the remaining
+    # checks from err113 are useful.
+    - "do not define dynamic errors, use wrapped static errors instead: .*"
+
