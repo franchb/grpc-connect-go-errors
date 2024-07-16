@@ -14,6 +14,9 @@ jobs:
   build:
     uses: franchb/.github-go/.github/workflows/build.yml@v0.2.5
   test:
+    permissions:
+      actions: read
+      contents: read
     uses: franchb/.github-go/.github/workflows/test.yml@v0.2.5
   lint:
     uses: franchb/.github-go/.github/workflows/lint.yml@v0.2.5
