@@ -1,6 +1,6 @@
 module github.com/franchb/grpc-connect-go-errors
 
-go 1.22
+go 1.26.1
 
 require (
 	connectrpc.com/connect v1.16.2
