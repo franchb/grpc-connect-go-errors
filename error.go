@@ -22,8 +22,6 @@ func FromGRPCError(err error) error {
 		return connect.NewError(connect.CodeInternal, err)
 	}
 
-
-
 	var result *connect.Error
 
 	//nolint:exhaustive // codes.OK returns always a nil error handled at the first line of function.
@@ -70,17 +68,6 @@ func FromGRPCError(err error) error {
 		result = connect.NewError(connect.CodeInternal, err)
 	}
 
-	details := make([]*connect.ErrorDetail, 0, len(errorStatus.Details()))
-	for detail := range slices.Values(errorStatus.Details()) {
-		msg, ok := detail.(proto.Message)
-		if !ok {
-			continue
-		}
-		errorDetail, errorDetailErr := connect.NewErrorDetail(msg)
-		if errorDetailErr == nil {
-			details = append(details, errorDetail)
-		}
-	}
 	for detail := range slices.Values(errorStatus.Details()) {
 		msg, ok := detail.(proto.Message)
 		if !ok {
