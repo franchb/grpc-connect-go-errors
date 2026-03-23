@@ -8,6 +8,8 @@ import (
 	connect "connectrpc.com/connect"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/structpb"
 
 	connectgrpcerr "github.com/franchb/grpc-connect-go-errors"
 )
@@ -72,5 +74,35 @@ func TestFromGRPCErrorCodeOK(t *testing.T) {
 	result := connectgrpcerr.FromGRPCError(original)
 	if result != nil {
 		t.Errorf("got %v, want nil", result)
+	}
+}
+
+func TestFromGRPCErrorWithDetails(t *testing.T) {
+	t.Parallel()
+
+	detail := structpb.NewNullValue()
+
+	errorStatus, err := status.New(codes.FailedPrecondition, "err msg").WithDetails(detail)
+	if err != nil {
+		t.Fatalf("got unexpected error %v", err)
+	}
+	result := connectgrpcerr.FromGRPCError(errorStatus.Err())
+	var connectErr *connect.Error
+	ok := errors.As(result, &connectErr)
+	if !ok {
+		t.Fatalf("got non-connect error %v", result)
+	}
+
+	details := connectErr.Details()
+	if len(details) != 1 {
+		t.Errorf("unexpected amount of details %d (expected 1)", len(details))
+	} else {
+		detailMsg, err := details[0].Value()
+		if err != nil {
+			t.Fatalf("unexpected error %v when getting detail", err)
+		}
+		if !proto.Equal(detail, detailMsg) {
+			t.Errorf("grpc detail is not equal to converted detail")
+		}
 	}
 }
