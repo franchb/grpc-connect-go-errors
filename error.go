@@ -1,9 +1,12 @@
 package connectgrpcerr
 
 import (
+	"slices"
+
 	connect "connectrpc.com/connect"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 )
 
 // FromGRPCError maps the gRPC error to the corresponding connect-go error code.
@@ -19,6 +22,8 @@ func FromGRPCError(err error) error {
 		return connect.NewError(connect.CodeInternal, err)
 	}
 
+	var result *connect.Error
+
 	//nolint:exhaustive // codes.OK returns always a nil error handled at the first line of function.
 	switch errorStatus.Code() {
 	// case codes.OK:
@@ -28,38 +33,50 @@ func FromGRPCError(err error) error {
 	// an OK status? (Also, the Connect protocol doesn't use a code for
 	// successes.)
 	case codes.Canceled:
-		return connect.NewError(connect.CodeCanceled, err)
+		result = connect.NewError(connect.CodeCanceled, err)
 	case codes.Unknown:
-		return connect.NewError(connect.CodeUnknown, err)
+		result = connect.NewError(connect.CodeUnknown, err)
 	case codes.InvalidArgument:
-		return connect.NewError(connect.CodeInvalidArgument, err)
+		result = connect.NewError(connect.CodeInvalidArgument, err)
 	case codes.DeadlineExceeded:
-		return connect.NewError(connect.CodeDeadlineExceeded, err)
+		result = connect.NewError(connect.CodeDeadlineExceeded, err)
 	case codes.NotFound:
-		return connect.NewError(connect.CodeNotFound, err)
+		result = connect.NewError(connect.CodeNotFound, err)
 	case codes.AlreadyExists:
-		return connect.NewError(connect.CodeAlreadyExists, err)
+		result = connect.NewError(connect.CodeAlreadyExists, err)
 	case codes.PermissionDenied:
-		return connect.NewError(connect.CodePermissionDenied, err)
+		result = connect.NewError(connect.CodePermissionDenied, err)
 	case codes.ResourceExhausted:
-		return connect.NewError(connect.CodeResourceExhausted, err)
+		result = connect.NewError(connect.CodeResourceExhausted, err)
 	case codes.FailedPrecondition:
-		return connect.NewError(connect.CodeFailedPrecondition, err)
+		result = connect.NewError(connect.CodeFailedPrecondition, err)
 	case codes.Aborted:
-		return connect.NewError(connect.CodeAborted, err)
+		result = connect.NewError(connect.CodeAborted, err)
 	case codes.OutOfRange:
-		return connect.NewError(connect.CodeOutOfRange, err)
+		result = connect.NewError(connect.CodeOutOfRange, err)
 	case codes.Unimplemented:
-		return connect.NewError(connect.CodeUnimplemented, err)
+		result = connect.NewError(connect.CodeUnimplemented, err)
 	case codes.Internal:
-		return connect.NewError(connect.CodeInternal, err)
+		result = connect.NewError(connect.CodeInternal, err)
 	case codes.Unavailable:
-		return connect.NewError(connect.CodeUnavailable, err)
+		result = connect.NewError(connect.CodeUnavailable, err)
 	case codes.DataLoss:
-		return connect.NewError(connect.CodeDataLoss, err)
+		result = connect.NewError(connect.CodeDataLoss, err)
 	case codes.Unauthenticated:
-		return connect.NewError(connect.CodeUnauthenticated, err)
+		result = connect.NewError(connect.CodeUnauthenticated, err)
 	default:
-		return connect.NewError(connect.CodeInternal, err)
+		result = connect.NewError(connect.CodeInternal, err)
 	}
+
+	for detail := range slices.Values(errorStatus.Details()) {
+		msg, ok := detail.(proto.Message)
+		if !ok {
+			continue
+		}
+		errorDetail, errorDetailErr := connect.NewErrorDetail(msg)
+		if errorDetailErr == nil {
+			result.AddDetail(errorDetail)
+		}
+	}
+	return result
 }
